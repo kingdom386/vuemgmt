@@ -21,7 +21,7 @@
       </router-link>
     </scroll-pane>
     <ul v-show="visible" :style="{left:left+'px',top:top+'px'}" class="contextmenu">
-      <!-- <li @click="refreshSelectedTag(selectedTag)">刷新</li> -->
+      <li @click="refreshSelectedTag(selectedTag)">刷新</li>
       <li
         v-if="!(selectedTag.meta&&selectedTag.meta.affix)"
         @click="closeSelectedTag(selectedTag)"
@@ -49,10 +49,10 @@ export default {
   },
   computed: {
     visitedViews() {
-      return this.$store.state.tagsView.visitedViews
+      return this.$store.state.tagsView.visitedViews;
     },
     routes() {
-      return this.$store.state.permission.routes
+      return this.$store.state.permission.routes;
     }
   },
   watch: {
@@ -101,71 +101,71 @@ export default {
       const affixTags = (this.affixTags = this.filterAffixTags(this.routes));
       for (const tag of affixTags) {
         if (tag.name) {
-          this.$store.dispatch('addVisitedView', tag)
+          this.$store.dispatch("addVisitedView", tag);
         }
       }
     },
     addTags() {
       const { name } = this.$route;
       if (name) {
-        this.$store.dispatch('addView', this.$route)
+        this.$store.dispatch("addView", this.$route);
       }
       return false;
     },
     moveToCurrentTag() {
-      const tags = this.$refs.tag
+      const tags = this.$refs.tag;
       this.$nextTick(() => {
         for (const tag of tags) {
           if (tag.to.path === this.$route.path) {
-            this.$refs.scrollPane.moveToTarget(tag)
+            this.$refs.scrollPane.moveToTarget(tag);
             if (tag.to.fullPath !== this.$route.fullPath) {
-              this.$store.dispatch('updateVisitedView', this.$route)
+              this.$store.dispatch("updateVisitedView", this.$route);
             }
-            break
+            break;
           }
         }
-      })
+      });
     },
-    // refreshSelectedTag(view) {
-    //   this.$store.dispatch('delCachedView', view).then(() => {
-    //     const { fullPath } = view
-    //     this.$nextTick(() => {
-    //       this.$router.replace({
-    //         path: '/redirect' + fullPath
-    //       })
-    //     })
-    //   })
-    // },
+    refreshSelectedTag(view) {
+      this.$store.dispatch("delCachedView", view).then(() => {
+        const { fullPath } = view;
+        this.$nextTick(() => {
+          this.$router.replace({
+            path: "/redirect" + fullPath
+          });
+        });
+      });
+    },
     closeSelectedTag(view) {
-      this.$store.dispatch('delView', view).then(({ visitedViews }) => {
+      this.$store.dispatch("delView", view).then(({ visitedViews }) => {
         if (this.isActive(view)) {
-          this.toLastView(visitedViews, view)
+          this.toLastView(visitedViews, view);
         }
-      })
+      });
     },
     closeOthersTags() {
-      this.$router.push(this.selectedTag)
-      this.$store.dispatch('delOthersViews', this.selectedTag).then(() => {
-        this.moveToCurrentTag()
-      })
+      this.$router.push(this.selectedTag);
+      this.$store.dispatch("delOthersViews", this.selectedTag).then(() => {
+        this.moveToCurrentTag();
+      });
     },
     closeAllTags(view) {
-      this.$store.dispatch('delAllViews').then(({ visitedViews }) => {
+      this.$store.dispatch("delAllViews").then(({ visitedViews }) => {
         if (this.affixTags.some(tag => tag.path === view.path)) {
-          return
+          return;
         }
-        this.toLastView(visitedViews, view)
-      })
+        this.toLastView(visitedViews, view);
+      });
     },
     toLastView(visitedViews, view) {
-      const latestView = visitedViews.slice(-1)[0]
+      const latestView = visitedViews.slice(-1)[0];
       if (latestView) {
-        this.$router.push(latestView)
+        this.$router.push(latestView);
       } else {
-        if (view.name === 'dashboard') {
-          this.$router.replace({ path: '/redirect' + view.fullPath })
+        if (view.name === "dashboard") {
+          this.$router.replace({ path: "/redirect" + view.fullPath });
         } else {
-          this.$router.push('/')
+          this.$router.push("/");
         }
       }
     },
